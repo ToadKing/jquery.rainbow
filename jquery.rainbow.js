@@ -31,8 +31,8 @@
 var defaultSettings = {
 	start:     0,
 	width:     Math.PI / 16,
-	speed:     Math.PI,
-	timing:    50,
+	speed:     Math.PI * 64,
+	timeout:   50,
 	redPos:    2 * Math.PI / 3,
 	greenPos:  0,
 	bluePos:   4 * Math.PI / 3,
@@ -42,9 +42,9 @@ var defaultSettings = {
 };
 
 function rcolor(node, settings, i) {
-	var r = Math.ceil((Math.sin(settings.width * i + settings.redPos   - settings.start / settings.speed) + 1) * 127.5),
-		g = Math.ceil((Math.sin(settings.width * i + settings.greenPos - settings.start / settings.speed) + 1) * 127.5),
-		b = Math.ceil((Math.sin(settings.width * i + settings.bluePos  - settings.start / settings.speed) + 1) * 127.5);
+	var r = Math.ceil((Math.sin(settings.width * i + settings.redPos   - settings.start / (settings.speed / settings.timeout)) + 1) * 127.5),
+		g = Math.ceil((Math.sin(settings.width * i + settings.greenPos - settings.start / (settings.speed / settings.timeout)) + 1) * 127.5),
+		b = Math.ceil((Math.sin(settings.width * i + settings.bluePos  - settings.start / (settings.speed / settings.timeout)) + 1) * 127.5);
 	$(node).css({color: "rgb(" + r + "," + g + "," + b + ")"});
 }
 
@@ -124,7 +124,7 @@ $.fn.rainbow = function(settings) {
 		}
 		settings.timer = setInterval(function () {
 			doRainbow($this);
-		}, settings.timing);
+		}, settings.timeout);
 		$this.data("rainbowSettings", settings);
 	});
 };
