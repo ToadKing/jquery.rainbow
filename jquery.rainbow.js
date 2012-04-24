@@ -115,13 +115,17 @@ $.fn.rainbow = function(settings) {
 		}
 		settings = $.extend({}, defaultSettings, settings || {});
 		if (settings.start === "random") {
-			settings.start = Math.ceil(Math.random() * settings.speed * Math.PI * 2);
+			settings.start = Math.ceil(Math.random() * Math.PI * 2 * settings.speed / settings.timeout);
 		} else {
 			settings.start = 0;
 		}
 		if (!s) {
 			rainbowify($this[0], settings);
 		}
+		$this.data("rainbowSettings", settings);
+		// we run it first and juggle the settings to account for high inital interval timeouts
+		doRainbow($this);
+		settings = $this.data("rainbowSettings");
 		settings.timer = setInterval(function () {
 			doRainbow($this);
 		}, settings.timeout);
