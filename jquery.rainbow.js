@@ -122,6 +122,7 @@ $.fn.rainbow = function(settings) {
 		if (!s) {
 			rainbowify($this[0], settings);
 		}
+		$this.addClass(settings.className);
 		$this.data("rainbowSettings", settings);
 		// we run it first and juggle the settings to account for high inital interval timeouts
 		doRainbow($this);
