@@ -45,13 +45,18 @@ function rcolor(node, settings, i) {
 	var r = Math.ceil((Math.sin(settings.width * i + settings.redPos   - settings.start / (settings.speed / settings.timeout)) + 1) * 127.5),
 		g = Math.ceil((Math.sin(settings.width * i + settings.greenPos - settings.start / (settings.speed / settings.timeout)) + 1) * 127.5),
 		b = Math.ceil((Math.sin(settings.width * i + settings.bluePos  - settings.start / (settings.speed / settings.timeout)) + 1) * 127.5);
-	$(node).css({color: "rgb(" + r + "," + g + "," + b + ")"});
+
+	if ($(node).is("img")) {
+		$(node).css({backgroundColor: "rgb(" + r + "," + g + "," + b + ")"});
+	} else {
+		$(node).css({color: "rgb(" + r + "," + g + "," + b + ")"});
+	}
 }
 
 function doRainbow(node) {
 	var i = 0,
 		settings = node.data("rainbowSettings");
-	node.find("span").each(function () {
+	node.find("span, img").each(function () {
 		rcolor(this, settings, i);
 		i += 1;
 	});
