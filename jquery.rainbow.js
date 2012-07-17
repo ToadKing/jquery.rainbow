@@ -26,116 +26,116 @@
  */
 
 (function ($) {
-"use strict";
+	"use strict";
 
-var defaultSettings = {
-	start:     0,
-	width:     Math.PI / 16,
-	speed:     Math.PI * 64,
-	timeout:   50,
-	redPos:    2 * Math.PI / 3,
-	greenPos:  0,
-	bluePos:   4 * Math.PI / 3,
-	className: "rainbow",
-	spanName:  "jQueryRainbow",
-	timer:     null
-};
+	var defaultSettings = {
+		start:     0,
+		width:     Math.PI / 16,
+		speed:     Math.PI * 64,
+		timeout:   50,
+		redPos:    2 * Math.PI / 3,
+		greenPos:  0,
+		bluePos:   4 * Math.PI / 3,
+		className: "rainbow",
+		spanName:  "jQueryRainbow",
+		timer:     null
+	};
 
-function rcolor(node, settings, i) {
-	var r = Math.ceil((Math.sin(settings.width * i + settings.redPos   - settings.start / (settings.speed / settings.timeout)) + 1) * 127.5),
-		g = Math.ceil((Math.sin(settings.width * i + settings.greenPos - settings.start / (settings.speed / settings.timeout)) + 1) * 127.5),
-		b = Math.ceil((Math.sin(settings.width * i + settings.bluePos  - settings.start / (settings.speed / settings.timeout)) + 1) * 127.5);
+	function rcolor(node, settings, i) {
+		var r = Math.ceil((Math.sin(settings.width * i + settings.redPos   - settings.start / (settings.speed / settings.timeout)) + 1) * 127.5),
+			g = Math.ceil((Math.sin(settings.width * i + settings.greenPos - settings.start / (settings.speed / settings.timeout)) + 1) * 127.5),
+			b = Math.ceil((Math.sin(settings.width * i + settings.bluePos  - settings.start / (settings.speed / settings.timeout)) + 1) * 127.5);
 
-	if ($(node).is("img")) {
-		$(node).css({backgroundColor: "rgb(" + r + "," + g + "," + b + ")"});
-	} else {
-		$(node).css({color: "rgb(" + r + "," + g + "," + b + ")"});
+		if ($(node).is("img")) {
+			$(node).css({backgroundColor: "rgb(" + r + "," + g + "," + b + ")"});
+		} else {
+			$(node).css({color: "rgb(" + r + "," + g + "," + b + ")"});
+		}
 	}
-}
 
-function doRainbow(node) {
-	var i = 0,
-		settings = node.data("rainbowSettings");
-	node.find("span, img").each(function () {
-		rcolor(this, settings, i);
-		i += 1;
-	});
-	settings.start += 1;
-	node.data("rainbowSettings", settings);
-}
+	function doRainbow(node) {
+		var i = 0,
+			settings = $(node).data("rainbowSettings");
+		$(node).find("span, img").each(function () {
+			rcolor(this, settings, i);
+			i += 1;
+		});
+		settings.start += 1;
+		$(node).data("rainbowSettings", settings);
+	}
 
-// apparently jQuery doesn't feel like handling text nodes
-function rnode(node, settings) {
-	var text = node.data,
-		i = 0,
-		s = node,
-		s2;
-	node.data = "";
-	do {
-		s2 = document.createElement("span");
-		s2.className = settings.spanName;
-		s2.appendChild(document.createTextNode(text.charAt(i)));
-		if (!s.nextSibling) {
-			s.parentNode.appendChild(s2);
-		} else {
-			s.parentNode.insertBefore(s2, s.nextSibling);
-		}
-		s = s2;
-		i += 1;
-	} while (i < text.length);
-	return s;
-}
-
-function rainbowify(node, settings) {
-	$(node).contents().each(function () {
-		if (this.nodeType === 3) {
-			rnode(this, settings);
-		} else {
-			$(this).each(function () {
-				rainbowify(this, settings);
-			});
-		}
-	});
-}
-
-$.fn.rainbow = function(settings) {
-	this.each(function () {
-		var $this = $(this),
-			s = $this.data("rainbowSettings");
-		if (settings === false) {
-			if (typeof s === "object") {
-				$this.removeClass(s.className);
-				clearInterval(s.timer);
-				if (typeof s.spanName === "string") {
-					$this.find("span." + s.spanName).each(function () {
-						$(this).replaceWith(this.childNodes);
-					});
-				}
+	// apparently jQuery doesn't feel like handling text nodes
+	function rnode(node, settings) {
+		var text = node.data,
+			i = 0,
+			s = node,
+			s2;
+		node.data = "";
+		do {
+			s2 = document.createElement("span");
+			s2.className = settings.spanName;
+			s2.appendChild(document.createTextNode(text.charAt(i)));
+			if (!s.nextSibling) {
+				s.parentNode.appendChild(s2);
+			} else {
+				s.parentNode.insertBefore(s2, s.nextSibling);
 			}
-			$this.data("rainbowSettings", null);
-			return;
-		}
-		if (s) {
-			clearInterval(s.timer);
-		}
-		settings = $.extend({}, defaultSettings, settings || {});
-		if (settings.start === "random") {
-			settings.start = Math.ceil(Math.random() * Math.PI * 2 * settings.speed / settings.timeout);
-		} else {
-			settings.start = 0;
-		}
-		if (!s) {
-			rainbowify($this[0], settings);
-		}
-		$this.addClass(settings.className);
-		$this.data("rainbowSettings", settings);
-		// we run it first and juggle the settings to account for high inital interval timeouts
-		doRainbow($this);
-		settings = $this.data("rainbowSettings");
-		settings.timer = setInterval(function () {
-			doRainbow($this);
-		}, settings.timeout);
-		$this.data("rainbowSettings", settings);
-	});
-};
+			s = s2;
+			i += 1;
+		} while (i < text.length);
+		return s;
+	}
+
+	function rainbowify(node, settings) {
+		$(node).contents().each(function () {
+			if (this.nodeType === 3) {
+				rnode(this, settings);
+			} else {
+				$(this).each(function () {
+					rainbowify(this, settings);
+				});
+			}
+		});
+	}
+
+	$.fn.rainbow = function (settings) {
+		this.each(function () {
+			var $this = $(this),
+				s = $this.data("rainbowSettings");
+			if (settings === false) {
+				if (typeof s === "object") {
+					$this.removeClass(s.className);
+					clearInterval(s.timer);
+					if (typeof s.spanName === "string") {
+						$this.find("span." + s.spanName).each(function () {
+							$(this).replaceWith(this.childNodes);
+						});
+					}
+				}
+				$this.data("rainbowSettings", null);
+				return;
+			}
+			if (s) {
+				clearInterval(s.timer);
+			}
+			settings = $.extend({}, defaultSettings, settings || {});
+			if (settings.start === "random") {
+				settings.start = Math.ceil(Math.random() * Math.PI * 2 * settings.speed / settings.timeout);
+			} else {
+				settings.start = 0;
+			}
+			if (!s) {
+				rainbowify($this[0], settings);
+			}
+			$this.addClass(settings.className);
+			$this.data("rainbowSettings", settings);
+			// we run it first and juggle the settings to account for high inital interval timeouts
+			doRainbow(this);
+			settings = $this.data("rainbowSettings");
+			settings.timer = setInterval(function () {
+				doRainbow($this[0]);
+			}, settings.timeout);
+			$this.data("rainbowSettings", settings);
+		});
+	};
 }(window.jQuery));
