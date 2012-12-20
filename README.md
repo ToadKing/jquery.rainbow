@@ -18,9 +18,9 @@ You can set the following options:
 		width:     Math.PI / 16,    // width of color bands
 		speed:     Math.PI * 64,    // speed at which the colors change
 		timeout:   50,              // milliseconds between each update, set low for smoothness
-		redPos:    2 * Math.PI / 3, // position of the start of the red band
-		greenPos:  0,               // position of the start of the green band
-		bluePos:   4 * Math.PI / 3, // position of the start of the blue band
+		redPos:    2 * Math.PI / 3, // position of the start of the red band, "high" for always full, or "low" for always 0
+		greenPos:  0,               // position of the start of the green band, "high" for always full, or "low" for always 0
+		bluePos:   4 * Math.PI / 3, // position of the start of the blue band, "high" for always full, or "low" for always 0
 		className: "rainbow",       // class name for node rainbowifying
 		spanName:  "jQueryRainbow", // class names for all the helper <span>s
 	});

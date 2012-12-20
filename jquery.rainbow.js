@@ -41,10 +41,20 @@
 		timer:     null
 	};
 
+	function calculateColor(pos, settings, i) {
+		if (pos === "high") {
+			return 255;
+		} else if (pos === "low") {
+			return 0;
+		} else {
+			return Math.ceil((Math.sin(settings.width * i + pos - settings.start / (settings.speed / settings.timeout)) + 1) * 127.5);
+		}
+	}
+
 	function rcolor(node, settings, i) {
-		var r = Math.ceil((Math.sin(settings.width * i + settings.redPos   - settings.start / (settings.speed / settings.timeout)) + 1) * 127.5),
-			g = Math.ceil((Math.sin(settings.width * i + settings.greenPos - settings.start / (settings.speed / settings.timeout)) + 1) * 127.5),
-			b = Math.ceil((Math.sin(settings.width * i + settings.bluePos  - settings.start / (settings.speed / settings.timeout)) + 1) * 127.5);
+		var r = calculateColor(settings.redPos, settings, i),
+			g = calculateColor(settings.greenPos, settings, i),
+			b = calculateColor(settings.bluePos, settings, i);
 
 		if ($(node).is("img")) {
 			$(node).css({backgroundColor: "rgb(" + r + "," + g + "," + b + ")"});
